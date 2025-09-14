@@ -1,0 +1,35 @@
+[33medce3dd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mNL-to-Logic[m[33m, [m[1;32mbackup-NL-to-Logic[m[33m)[m Add model files via Git LFS
+[33m39d31b9[m Track model files with Git LFS
+[33m53ae42f[m Implement Docker server setup and make model functional
+[33m320c13a[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m applied changes
+[33m3031909[m timeout on generating_prompts
+[33m0a69a01[m fix bash
+[33m6d969d0[m Intention pipeline added, llama-cpp ->  ollama llama3:8b
+[33m582ef0b[m WIP - dockers integration left
+[33m3e8d9cc[m WIP
+[33m35b43e9[m fix docker crash onload
+[33ma515413[m update docker_compose
+[33m2f6cf2e[m update docker_compose
+[33m50b7fc7[m hot fixs
+[33mbc6e142[m uncomment react-app
+[33mc4da4e1[m update with new version
+[33md29250a[m model working
+[33m4a916ef[m tmp
+[33m5bcc107[m add .env to .gitignore
+[33m8893ba9[m tmp - transition to desktop
+[33mfc7ae1d[m feat: add remove button for rows
+[33m16a47cf[m transcription disabled when segment is True
+[33mcbaf9a4[m change the DockerFile for cuda support
+[33ma955060[m add of the transcriptions
+[33m4d1bac0[m add of the transcriptions
+[33m38135d1[m ASR modifications from feedback #1
+[33m2053873[m first release, to review
+[33mb71a2c6[m docker & asr, need changes
+[33m78a498d[m Initial commit
+[33m77628c8[m Simplifying command/run interface
+[33mfe5a956[m add of the run/ related endpoints
+[33m84297ac[m deletion of postgre DB
+[33maa24f75[m cleaning
+[33m3322dfc[m add of a swagger interface
+[33mf99794f[m rm tree.txt
+[33m0fdf3ab[m First commit :P

@@ -7,25 +7,38 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     python3 \
     python3-distutils \
     python3-pip \
+    git \
     ffmpeg \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m pip install --upgrade pip
 
-RUN pip install -U openai-whisper
-
 WORKDIR /app
 
-COPY requirements.txt .
-
+# Install PyTorch
 RUN if [ "$USE_CUDA" = "true" ]; then \
       pip install --pre torch torchvision torchaudio --index-url https://download.pytorch.org/whl/nightly/cu128 ; \
     else \
       pip install torch torchvision torchaudio ; \
     fi
 
-RUN pip install --break-system-packages -r requirements.txt
+# Install project dependencies
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
+# Hugging Face deps
+RUN pip install huggingface_hub transformers accelerate safetensors peft
+
+# Copy your code
 COPY . .
 
-CMD ["python3", "app.py"]
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Hugging Face cache folder
+ENV HF_HOME=/models/hf_cache
+ENV MODEL_ID=meta-llama/Meta-Llama-3-8B-Instruct
+ENV OUTPUT_FILE=/app/output.txt
+
+ENTRYPOINT ["/entrypoint.sh"]

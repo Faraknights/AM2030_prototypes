@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from endpoints.asr import emotion_bp, intention_category_bp, intention_bp
+from endpoints.asr import transcribe_bp, folltl_generation_bp
 from flask_cors import CORS
 import os
 import json
@@ -15,9 +15,8 @@ with open(CONFIG_PATH) as config_file:
 app = Flask(__name__)
 CORS(app)
 
-app.register_blueprint(emotion_bp, url_prefix='/asr') 
-app.register_blueprint(intention_category_bp, url_prefix='/asr')
-app.register_blueprint(intention_bp, url_prefix='/asr') 
+app.register_blueprint(transcribe_bp, url_prefix='/asr') 
+app.register_blueprint(folltl_generation_bp, url_prefix='/asr')
 
 @app.route("/gpu")
 def check_gpu():

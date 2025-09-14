@@ -1,20 +1,20 @@
 services:
-  react-ui:
-    build:
-      context: .
-      dockerfile: ./react-ui/Dockerfile
-    container_name: react-ui
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./react-ui:/app
-      - /app/node_modules
-    environment:
-      - NODE_ENV=development
-    stdin_open: true
-    tty: true
-    depends_on:
-      - app
+#  react-ui:
+#    build:
+#      context: .
+#      dockerfile: ./react-ui/Dockerfile
+#    container_name: react-ui
+#    ports:
+#      - "3000:3000"
+#    volumes:
+#      - ./react-ui:/app
+#      - /app/node_modules
+#    environment:
+#      - NODE_ENV=development
+#    stdin_open: true
+#    tty: true
+#    depends_on:
+#      - app
 
   app:
     build:
@@ -25,28 +25,11 @@ services:
     container_name: app
     ports:
       - "5000:5000"
-    depends_on:
-      - ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-
-
-  ollama:
-    build:
-      context: ./ollama
-      dockerfile: Dockerfile
-    container_name: ollama
+    env_file:
+      - ./.env
     volumes:
-      - ollama-data:/app/data 
-    environment:
-      - ENV=production
-    ports:
-      - "11434:11434"
+      - ./models:/models
+      - ./llamipa_adapter:/outputs/llamipa_adapter
     deploy:
       resources:
         reservations:

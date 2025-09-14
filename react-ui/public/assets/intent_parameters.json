@@ -1,0 +1,286 @@
+[
+  {
+    "intent": "CancelDiscoveryDrive",
+    "parameters": []
+  },
+  {
+    "intent": "ACState",
+    "parameters": []
+  },
+  {
+    "intent": "Ask_DiscoveryDrive",
+    "parameters": []
+  },
+  {
+    "intent": "CB_payment",
+    "parameters": []
+  },
+  {
+    "intent": "ColorCode",
+    "parameters": []
+  },
+  {
+    "intent": "DefaultDuration_DiscoveryDrive",
+    "parameters": []
+  },
+  {
+    "intent": "DiscoveryDrive_FromNavRequest",
+    "parameters": []
+  },
+  {
+    "intent": "EMS_ExtendedModeSelected",
+    "parameters": []
+  },
+  {
+    "intent": "ERR_POINoResult",
+    "parameters": []
+  },
+  {
+    "intent": "ETP_EvDealerAppointment",
+    "parameters": []
+  },
+  {
+    "intent": "ETP_EvDealerCall",
+    "parameters": []
+  },
+  {
+    "intent": "GEN_AssistantOverview",
+    "parameters": []
+  },
+  {
+    "intent": "GetCurrentTime",
+    "parameters": []
+  },
+  {
+    "intent": "Global_Poi_Choice",
+    "parameters": []
+  },
+  {
+    "intent": "Global_User_Choice",
+    "parameters": []
+  },
+  {
+    "intent": "Global_User_Rejection",
+    "parameters": []
+  },
+  {
+    "intent": "Hackathon",
+    "parameters": []
+  },
+  {
+    "intent": "Nav_AddStop",
+    "parameters": []
+  },
+  {
+    "intent": "Nav_ASKUserNewGuidance",
+    "parameters": []
+  },
+  {
+    "intent": "NAV_RemoveStop",
+    "parameters": []
+  },
+  {
+    "intent": "NAV_ShowMapView",
+    "parameters": []
+  },
+  {
+    "intent": "NAV_StartGuidance",
+    "parameters": []
+  },
+  {
+    "intent": "NAV_StopGuidance",
+    "parameters": []
+  },
+  {
+    "intent": "OrderPizza",
+    "parameters": []
+  },
+  {
+    "intent": "Payment_Authorization",
+    "parameters": []
+  },
+  {
+    "intent": "Payment_Reservation",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_News",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskForwardChapter",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskLike",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskListenToPodcast",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskNextSkipPodcast",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskPausePodcast",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskPreviousChapter",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskResumeLastPodcast",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_AskRewindChapter",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_PersonalDailyBrief",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_PodcastAroundMe",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_TellListenToPodcast_dynamic",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_TellListenToPodcast_resume",
+    "parameters": []
+  },
+  {
+    "intent": "PDC_Tell_LastChapter",
+    "parameters": []
+  },
+  {
+    "intent": "PMS_PersonalizationModeExplain",
+    "parameters": []
+  },
+  {
+    "intent": "POI_InfoChoice",
+    "parameters": []
+  },
+  {
+    "intent": "POI_NoDataInRadius",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_AQA_AirQualityAlert",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_ETP_EvTestProposal",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_EWA_EndWeatherAQAlert",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_NBP_NewsBulletinProposal",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_USER_CONFIRMATION",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_WAW_Weather_AlertWaypoint",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_WAZ_WeatherAlertZone",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_WCN_WarningContactNotification",
+    "parameters": []
+  },
+  {
+    "intent": "PROA_WOB_WelcomeOnBoard",
+    "parameters": []
+  },
+  {
+    "intent": "RemindMeLater",
+    "parameters": []
+  },
+  {
+    "intent": "SaveCardInfo",
+    "parameters": []
+  },
+  {
+    "intent": "SaveDiscoveryDrive",
+    "parameters": []
+  },
+  {
+    "intent": "ScenicMode_AddPOIToTrip",
+    "parameters": []
+  },
+  {
+    "intent": "Scenic_Mode_User_Choice",
+    "parameters": []
+  },
+  {
+    "intent": "SendToPhone",
+    "parameters": []
+  },
+  {
+    "intent": "ShowDetails",
+    "parameters": []
+  },
+  {
+    "intent": "SMA_ShowMeAround",
+    "parameters": []
+  },
+  {
+    "intent": "SMA_ShowMePOIs",
+    "parameters": []
+  },
+  {
+    "intent": "StartDiscoveryDrive",
+    "parameters": []
+  },
+  {
+    "intent": "StartDiscoveryDrive_UserChoice",
+    "parameters": []
+  },
+  {
+    "intent": "TG_AskMoreInfo",
+    "parameters": []
+  },
+  {
+    "intent": "TG_NextPOIStory",
+    "parameters": []
+  },
+  {
+    "intent": "TG_ScenicMode",
+    "parameters": []
+  },
+  {
+    "intent": "TurnOnMoodLight",
+    "parameters": []
+  },
+  {
+    "intent": "WAQ_AskWeatherAirQuality",
+    "parameters": []
+  },
+  {
+    "intent": "WAQ_TellWeatherAirQuality",
+    "parameters": []
+  },
+  {
+    "intent": "WindowControl",
+    "parameters": []
+  },
+  {
+    "intent": "GetTyrePressure",
+    "parameters": []
+  }
+]

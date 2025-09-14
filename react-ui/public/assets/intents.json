@@ -32,7 +32,8 @@
                 "code": "INT",
                 "count": 1
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "ACState",
@@ -54,6 +55,22 @@
             {
                 "code": "SYS",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "state",
+                "description": "If the user want the AC on or off",
+                "call": "if you want the AC on or off",
+                "type": "\"on\" | \"off\"",
+                "optional": false
+            },
+            {
+                "name": "temperature",
+                "description": "Temperature of the AC if on",
+                "call": "what temperature you’d like",
+                "type": "str",
+                "optional": true
             }
         ]
     },
@@ -104,6 +121,36 @@
                 "code": "POI",
                 "count": 2
             }
+        ],
+        "parameters": [
+            {
+                "name": "currentposition",
+                "description": "The location where the user wants the Discovery Drive to start from",
+                "call": "where you want to start the Discovery Drive",
+                "type": "str",
+                "optional": true
+            },
+            {
+                "name": "destination",
+                "description": "The location or area the user wants to reach or explore",
+                "call": "your desired destination",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "duration",
+                "description": "The estimated or preferred length of the Discovery Drive",
+                "call": "how many time you want the Discovery Drive to last",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "distance",
+                "description": "The maximum distance (in kilometers) the Discovery Drive should cover",
+                "call": "the distance range you'd like the Discovery Drive to cover",
+                "type": "int",
+                "optional": true
+            }
         ]
     },
     {
@@ -131,6 +178,15 @@
                 "code": "COM",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "payment",
+                "description": "The product, bill, or service the user wants to pay for",
+                "call": "what you want to pay for",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -152,6 +208,14 @@
             {
                 "code": "SYS",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "color",
+                "description": "The color the user wants for the ambient lighting inside the vehicle",
+                "call": "what color you want for the ambient lighting",
+                "optional": false
             }
         ]
     },
@@ -176,6 +240,15 @@
             {
                 "code": "DSC",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "duration",
+                "description": "The amount of time the user wants to set as the default duration for Discovery Drive tours",
+                "call": "how long you want your default Discovery Drive to last",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -208,7 +281,8 @@
                 "code": "NAV",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "EMS_ExtendedModeSelected",
@@ -231,6 +305,15 @@
             {
                 "code": "SYS",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "profile_name",
+                "description": "The name of the predefined driving mode or profile the user wants to activate",
+                "call": "which profile you want to use",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -280,6 +363,22 @@
                 "code": "COM",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "dealer_name",
+                "description": "The name of the car dealer or service center where the user wants to book the appointment",
+                "call": "which dealer you'd like to book an appointment with",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "appointment_type",
+                "description": "The type of appointment, such as maintenance, service, or test drive",
+                "call": "what kind of appointment you want to schedule",
+                "type": "str",
+                "optional": true
+            }
         ]
     },
     {
@@ -314,6 +413,15 @@
             },{
                 "code": "Sys",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "contact_name",
+                "description": "The name of the dealership or the specific person the user wants to call",
+                "call": "who would you like to call?",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -358,7 +466,8 @@
                 "code": "INT",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "GetCurrentTime",
@@ -390,6 +499,15 @@
                 "code": "PHN",
                 "count": 1
             }
+        ],
+        "parameters": [
+            {
+                "name": "location",
+                "description": "The geographical location for which the user wants to know the current time. If not provided, the system will assume the current location.",
+                "call": "for which location you want the time",
+                "type": "str",
+                "optional": true
+            }
         ]
     },
     {
@@ -418,7 +536,15 @@
                 "code": "DSC",
                 "count": 10
             }
-
+        ],
+        "parameters": [
+            {
+                "name": "poi_index",
+                "description": "The position or number of the point of interest selected by the user from a previously given list.",
+                "call": "which option from the list do you want to select",
+                "type": "int",
+                "optional": false
+            }
         ]
     },
     {
@@ -473,6 +599,15 @@
                 "code": "SYS",
                 "count": 4
             }
+        ],
+        "parameters": [
+            {
+                "name": "choice_index",
+                "description": "The number or position of the selected item from the list provided by the assistant.",
+                "call": "which option do you want to choose",
+                "type": "int",
+                "optional": false
+            }
         ]
     },
     {
@@ -508,7 +643,8 @@
                 "code": "SYS",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "Hackathon",
@@ -531,6 +667,15 @@
             {
                 "code": "MTN",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "metric_type",
+                "description": "The type of performance metric requested (e.g., acceleration, battery status, overtaking capability).",
+                "call": "which performance data you want?",
+                "type": "str",
+                "optional": true
             }
         ]
     },
@@ -555,6 +700,15 @@
             {
                 "code": "NAV",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "stop_location",
+                "description": "The place or address the user wants to add as a stop in their current route.",
+                "call": "where you want to add a stop",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -599,6 +753,15 @@
                 "code": "NAV",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "stop_name",
+                "description": "The name or description of the stop the user wants to remove from their current route.",
+                "call": "which stop you want to remove from your route",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -622,7 +785,8 @@
                 "code": "NAV",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "NAV_StartGuidance",
@@ -645,6 +809,15 @@
             {
                 "code": "NAV",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "destination",
+                "description": "The place, address, or point of interest the user wants to navigate to.",
+                "call": "where you want to go",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -673,7 +846,8 @@
                 "code": "NAV",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "OrderPizza",
@@ -696,6 +870,29 @@
             {
                 "code": "COM",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "pizza_type",
+                "description": "The type or variety of pizza the user wants to order, such as Margherita, Pepperoni, or Veggie.",
+                "call": "which type of pizza you want",
+                "type": "str",
+                "optional": true
+            },
+            {
+                "name": "pizza_size",
+                "description": "The size of the pizza the user prefers, e.g., small, medium, large.",
+                "call": "what size pizza you prefer",
+                "type": "str",
+                "optional": true
+            },
+            {
+                "name": "delivery_location",
+                "description": "The location where the pizza should be delivered.",
+                "call": "where you want the pizza delivered",
+                "type": "str",
+                "optional": true
             }
         ]
     },
@@ -721,6 +918,15 @@
                 "code": "COM",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "amount",
+                "description": "The amount of money the user authorizes to be paid.",
+                "call": "the amount you agree to pay",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -745,6 +951,29 @@
             {
                 "code": "COM",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "poi_type",
+                "description": "The type of point of interest for the reservation, such as restaurant or hotel.",
+                "call": "the type of place you want to reserve",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "reservation_date",
+                "description": "The date or time for the reservation.",
+                "call": "the date or time for your reservation",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "guest_count",
+                "description": "The number of people for the reservation.",
+                "call": "how many people the reservation is for",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -778,7 +1007,8 @@
                 "code": "MED",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PDC_AskForwardChapter",
@@ -807,6 +1037,22 @@
             {
                 "code": "MED",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "offset",
+                "description": "The number of units by which the user wants to advance or skip forward in the podcast.",
+                "call": "how many units do you want to skip forward?",
+                "type": "int",
+                "optional": false
+            },
+            {
+                "name": "time_unit",
+                "description": "The unit of time for the offset, typically seconds or minutes.",
+                "call": "if it is seconds or minutes?",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -848,6 +1094,15 @@
             {
                 "code": "MED",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "sentiment_expression",
+                "description": "The user's positive or negative expression showing enthusiasm, appreciation, or dislike about something.",
+                "call": "what feeling or opinion do you want to express?",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -893,6 +1148,22 @@
                 "code": "MED",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "category",
+                "description": "The podcast topic or genre the user wants to listen to, such as technology, science, or entrepreneurship.",
+                "call": "which podcast category are you interested in?",
+                "type": "str",
+                "optional": true
+            },
+            {
+                "name": "minute",
+                "description": "The maximum duration in minutes for the podcast episode the user wants to listen to.",
+                "call": "what maximum length in minutes should the podcast have?",
+                "type": "int",
+                "optional": true
+            }
         ]
     },
     {
@@ -922,7 +1193,8 @@
                 "code": "MED",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PDC_AskPausePodcast",
@@ -953,7 +1225,8 @@
                 "code": "MED",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PDC_AskPreviousChapter",
@@ -977,7 +1250,8 @@
                 "code": "MED",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PDC_AskResumeLastPodcast",
@@ -1010,6 +1284,15 @@
                 "code": "MED",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "chosen_podcast",
+                "description": "The name or identifier of the podcast the user wants to resume. If not specified, the assistant resumes the last played podcast.",
+                "call": "which podcast do you want to resume?",
+                "type": "str",
+                "optional": true
+            }
         ]
     },
     {
@@ -1038,6 +1321,22 @@
                 "code": "MED",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "offset",
+                "description": "The number of units by which the user wants to rewind in the podcast.",
+                "call": "how many units do you want to skip forward?",
+                "type": "int",
+                "optional": false
+            },
+            {
+                "name": "time_unit",
+                "description": "The unit of time for the offset, typically seconds or minutes.",
+                "call": "if it is seconds or minutes?",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -1060,7 +1359,8 @@
                 "code": "INT",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PDC_PodcastAroundMe",
@@ -1086,7 +1386,8 @@
                 "code": "POI",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PDC_TellListenToPodcast_dynamic",
@@ -1133,7 +1434,7 @@
         "intent": "PMS_PersonalizationModeExplain",
         "language": "en",
         "description": "Provide an explanation or definition of a specific car mode or feature, or generally explain how the user can customize their car.",
-        "trigger": "",
+        "trigger": "todo",
         "templates": [
             "what does it mean {typemode} mode",
             "could you explain me what is the {typemode} mode",
@@ -1152,7 +1453,7 @@
         "intent": "POI_InfoChoice",
         "language": "en",
         "description": "Requests additional information about a specific Point of Interest (POI) selected by the user.",
-        "trigger": "",
+        "trigger": "todo",
         "templates": [
             "i want more information about the {choice} one",
             "i want more information about the {choice}",
@@ -1216,6 +1517,15 @@
                 "code": "MED",
                 "count": 1
             }
+        ],
+        "parameters": [
+            {
+                "name": "service_name",
+                "description": "The name service the user wants to try or demo.",
+                "call": "which service would you like to try?",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -1235,7 +1545,8 @@
                 "code": "INT",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PROA_NBP_NewsBulletinProposal",
@@ -1268,6 +1579,15 @@
             {
                 "code": "DSC",
                 "count": 1
+            }
+        ],
+        "parameters": [
+            {
+                "name": "location",
+                "description": "The place or route segment for which the user wants news updates.",
+                "call": "which location do you want news updates for",
+                "type": "str",
+                "optional": true
             }
         ]
     },
@@ -1304,7 +1624,8 @@
                 "code": "SYS",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "PROA_WAW_Weather_AlertWaypoint",
@@ -1317,7 +1638,8 @@
         "examples": [
             ""
         ],
-        "categories": []
+        "categories": [],
+        "parameters": []
     },
     {
         "intent": "PROA_WAZ_WeatherAlertZone",
@@ -1330,7 +1652,8 @@
         "examples": [
             ""
         ],
-        "categories": []
+        "categories": [],
+        "parameters": []
     },
     {
         "intent": "PROA_WCN_WarningContactNotification",
@@ -1343,7 +1666,8 @@
         "examples": [
             ""
         ],
-        "categories": []
+        "categories": [],
+        "parameters": []
     },
     {
         "intent": "PROA_WOB_WelcomeOnBoard",
@@ -1357,7 +1681,8 @@
         "examples": [
             ""
         ],
-        "categories": []
+        "categories": [],
+        "parameters": []
     },
     {
         "intent": "RemindMeLater",
@@ -1385,6 +1710,15 @@
                 "code": "SYS",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "reminder_time",
+                "description": "The time when the user wants to be reminded.",
+                "call": "when should I remind you?",
+                "type": "str",
+                "optional": true
+            }
         ]
     },
     {
@@ -1409,7 +1743,8 @@
                 "code": "COM",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "SaveDiscoveryDrive",
@@ -1438,7 +1773,8 @@
                 "code": "SYS",
                 "count": 5
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "ScenicMode_AddPOIToTrip",
@@ -1468,6 +1804,15 @@
             {
                 "code": "POI",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "poi_name",
+                "description": "The name or identifier of the point of interest the user wants to add to their current trip or scenic route.",
+                "call": "which point of interest do you want to add to your trip?",
+                "type": "str",
+                "optional": false
             }
         ]
     },
@@ -1499,6 +1844,15 @@
                 "code": "POI",
                 "count": 3
             }
+        ],
+        "parameters": [
+            {
+                "name": "poi_choice",
+                "description": "The specific point of interest the user wants to know more about during their scenic drive.",
+                "call": "which point of interest do you want to know more about?",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -1525,7 +1879,8 @@
                 "code": "PHN",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "ShowDetails",
@@ -1552,7 +1907,8 @@
                 "code": "INT",
                 "count": 2
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "SMA_ShowMeAround",
@@ -1588,6 +1944,15 @@
             {
                 "code": "COM",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "place",
+                "description": "The place or category of points of interest the user wants to explore around.",
+                "call": "what place or type of points of interest do you want to see",
+                "type": "str",
+                "optional": true
             }
         ]
     },
@@ -1650,6 +2015,15 @@
                 "code": "DSC",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "poi_type",
+                "description": "The type of point of interest the user wants to see along their route (e.g., museums, restaurants, parks).",
+                "call": "What kind of places would you like to see on your route?",
+                "type": "str",
+                "optional": true
+            }
         ]
     },
     {
@@ -1678,6 +2052,15 @@
                 "code": "NAV",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "userchoice",
+                "description": "The index or name of the Discovery Drive tour the user wants to start from a previously presented list.",
+                "call": "the index of the tour would you like to start?",
+                "type": "str",
+                "optional": false
+            }
         ]
     },
     {
@@ -1704,7 +2087,8 @@
                 "code": "INT",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "TG_NextPOIStory",
@@ -1733,7 +2117,8 @@
                 "code": "POI",
                 "count": 1
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "TG_ScenicMode",
@@ -1756,7 +2141,8 @@
                 "code": "DSC",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     },
     {
         "intent": "TurnOnMoodLight",
@@ -1779,6 +2165,15 @@
             {
                 "code": "SYS",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "state",
+                "description": "If the user want the mood lights on or off",
+                "call": "if you want mood lights on or off",
+                "type": "\"on\" | \"off\"",
+                "optional": false
             }
         ]
     },
@@ -1845,6 +2240,29 @@
                 "code": "INT",
                 "count": 10
             }
+        ],
+        "parameters": [
+            {
+                "name": "airinfo",
+                "description": "The type of information requested, such as weather, air quality, or both.",
+                "call": "Do you want the weather, air quality, or both?",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "requesttime",
+                "description": "The time for which the information is requested (e.g., now, today, tomorrow).",
+                "call": "For what time do you want this information?",
+                "type": "str",
+                "optional": true
+            },
+            {
+                "name": "requestcity",
+                "description": "The city or location for which the weather and/or air quality is requested.",
+                "call": "Which city are you asking about?",
+                "type": "str",
+                "optional": true
+            }
         ]
     },
     {
@@ -1858,7 +2276,8 @@
             "waq_tellweather {airinfo} {numbervalue} {unit} {weatherstatus} {requesttime} {requestcityan}"
         ],
         "examples": [],
-        "categories": []
+        "categories": [],
+        "parameters": []
     },
     {
         "intent": "WindowControl",
@@ -1872,6 +2291,22 @@
             {
                 "code": "SYS",
                 "count": 10
+            }
+        ],
+        "parameters": [
+            {
+                "name": "action",
+                "description": "The action to perform on the window(s), such as opening or closing.",
+                "call": "What do you want to do with the window?",
+                "type": "str",
+                "optional": false
+            },
+            {
+                "name": "location",
+                "description": "The specific window(s) being referred to, such as 'front left', 'rear right', or 'all'.",
+                "call": "Which window or windows are you referring to?",
+                "type": "str",
+                "optional": true
             }
         ]
     },
@@ -1892,6 +2327,7 @@
                 "code": "MTN",
                 "count": 10
             }
-        ]
+        ],
+        "parameters": []
     }
 ]

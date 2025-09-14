@@ -121,15 +121,28 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
   const resultRef = useRef(null);
   const [intents, setIntents] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [intentsData, setIntentsData] = useState({})
 
   useEffect(() => {
     fetch('/assets/intents.json')
-      .then((response) => response.json())
-      .then((data) => setIntents([...data.map(intent => intent.intent), "no_intention"]));
+      .then(response => response.json())
+      .then(data => {
+        setIntents([...data.map(intent => intent.intent), "no_intention"]);
+
+        // Store descriptions and parameters for each intention
+        const mappedData = data.reduce((acc, intent) => {
+          acc[intent.intent] = {
+            description: intent.description || "No description available",
+            parameters: intent.parameters || []
+          };
+          return acc;
+        }, {});
+        setIntentsData(mappedData);
+      });
 
     fetch('/assets/categories.json')
-      .then((response) => response.json())
-      .then((data) => setCategories(data.map(category => category.name)));
+      .then(response => response.json())
+      .then(data => setCategories(data.map(category => category.name)));
   }, []);
 
   useEffect(() => {
@@ -146,7 +159,6 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
     audioFiles[selectedAudio].transcription.trim() !== "";
 
   const processSentence = async (sentence, mode) => {
-    // Start with an empty entry for this sentence
     console.log("Processing sentence:", sentence, "Mode:", mode);
     setResponseMessage((prev) => [
       ...prev,
@@ -158,12 +170,12 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
         categoryCode: "",
         emotions: [],
         intention: "",
+        parameters: null, // NEW
         status: null,
       },
     ]);
 
-    if(mode ==="emotion" || mode === "both"){
-      // 1. Emotion API call
+    if (mode === "emotion" || mode === "both") {
       const { status: emotionStatus, result: emotionRaw } = await callASRApi("emotion", { transcription: sentence });
       const { chainOfThought: emotionCoT, code: emotions } = processResponse(emotionRaw);
 
@@ -175,8 +187,8 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
         )
       );
     }
-    if(mode === "intention" || mode === "both"){
-      // 2. Intention Category API call
+
+    if (mode === "intention" || mode === "both") {
       const { result: intentionRaw } = await callASRApi("intention_category", { transcription: sentence });
       const { chainOfThought: intentionCoT, code: categoryCode } = extractIntentName(intentionRaw, categories, 1, "NONE");
 
@@ -188,8 +200,7 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
         )
       );
 
-      if(categories.includes(categoryCode)){
-        // 3. Fine Intention API call
+      if (categories.includes(categoryCode)) {
         const { status: fineStatus, result: fineIntentionRaw } = await callASRApi("intention", {
           category_code: categoryCode,
           transcription: sentence,
@@ -204,7 +215,44 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
               : item
           )
         );
+
         setStatus(fineStatus);
+
+        if (intention && intention !== "no_intention") {
+          const currentIntent = intentsData[intention] || {};
+          const intentionDescription = currentIntent.description || "No description available";
+          const intentionParams = currentIntent.parameters || [];
+
+          const parametersPayload = {
+            category_name: categoryCode,
+            category_description: "To be provided if available", // you can also fetch from categories.json if it contains descriptions
+            intention_name: intention,
+            intention_description: intentionDescription,
+            parameters_list: intentionParams.map(param => ({
+              name: param.name,
+              description: param.description
+            })),
+            user_utterance: sentence,
+          };
+
+          const { result: parametersRaw } = await callASRApi("parameters", parametersPayload);
+
+          let parsedParameters;
+          try {
+            parsedParameters = JSON.parse(parametersRaw);
+          } catch {
+            parsedParameters = parametersRaw;
+          }
+
+          setResponseMessage(prev =>
+            prev.map(item =>
+              item.text === sentence
+                ? { ...item, parameters: parsedParameters }
+                : item
+            )
+          );
+        }
+
       } else {
         setResponseMessage((prev) =>
           prev.map((item) =>
@@ -304,7 +352,7 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
             <>
               <span className="resultTitle">Status: {status}</span>
               <div ref={resultRef} className={`result ${status === 200 ? "success" : "fail"}`}>
-                {responseMessage.map(({ text, emotionCoT, intentionCoT, fineIntentionCoT, categoryCode, emotions, intention }, index) => (
+                {responseMessage.map(({ text, emotionCoT, intentionCoT, fineIntentionCoT, categoryCode, emotions, intention, parameters }, index) => (
                   <div key={index} className="result-item" style={{ marginBottom: "1rem" }}>
                     <strong>Input:</strong> <span className="input-text">{text}</span>
 
@@ -341,6 +389,12 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
                     {intention && (
                       <div className="code">
                         {intention}
+                      </div>
+                    )}
+
+                    {parameters && (
+                      <div className="code">
+                        {parameters}
                       </div>
                     )}
                   </div>
