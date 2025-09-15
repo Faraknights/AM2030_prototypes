@@ -9,8 +9,8 @@ html, body, #root, .App{
 
 body {
   background: #c1d9df;
-  background: -webkit-linear-gradient(to left, #b2e3ef, #e8ccf5, #efb3b8); 
-  background: linear-gradient(to left, #b2e3ef, #e8ccf5, #efb3b8); 
+  background: -webkit-linear-gradient(to left, #b2e3ef, #ccf5ec, #b3efb8); 
+  background: linear-gradient(to left, #b2e3ef, #ccf5ec, #b3efb8); 
   min-height: 100vh;
   display: flex;
   flex-direction: column;

@@ -25,7 +25,7 @@ function App() {
             ID: fileData.ID,
             encoded_audio: fileData.encoded_audio,
             audioUrl: `data:audio/wav;base64,${fileData.encoded_audio}`,
-            segment: fileData.segment || "F",
+            dialogue: fileData.dialogue || "F",
             transcription: fileData.transcription || "",
           };
         });

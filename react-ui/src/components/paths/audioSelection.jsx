@@ -59,7 +59,7 @@
                   ID: `audioFile_${Date.now()}`,
                   encoded_audio: base64,
                   audioUrl,
-                  segment: "F",
+                  dialogue: "F",
                   transcription,
                 },
               ]);
@@ -104,10 +104,10 @@
       });
     };
 
-    const updateAudioFileSegment = (index, newSegment) => {
+    const updateAudioFileDialogue = (index, newDialogue) => {
       setAudioFiles((prevFiles) => {
         const updatedFiles = [...prevFiles];
-        updatedFiles[index] = { ...updatedFiles[index], segment: newSegment };
+        updatedFiles[index] = { ...updatedFiles[index], dialogue: newDialogue };
         return updatedFiles;
       });
     };
@@ -148,7 +148,7 @@
                   ID: jsonData.ID,
                   encoded_audio: jsonData.encoded_audio,
                   audioUrl: `data:audio/wav;base64,${jsonData.encoded_audio}`,
-                  segment: jsonData.segment || "F",
+                  dialogue: jsonData.dialogue || "F",
                   transcription: jsonData.transcription || "", 
                 },
               ]);
@@ -186,7 +186,7 @@
                   ID: fileNameWithoutExtension,
                   encoded_audio: base64,
                   audioUrl: audioUrl,
-                  segment: "F",
+                  dialogue: "F",
                   transcription,
                 },
               ]);
@@ -241,9 +241,9 @@
                   hasError={file.ID === ""}
                 />
                 <SelectInput
-                  value={file.segment}
-                  setValue={(newSegment) => updateAudioFileSegment(index, newSegment)}
-                  placeholder="Segment"
+                  value={file.dialogue}
+                  setValue={(newDialogue) => updateAudioFileDialogue(index, newDialogue)}
+                  placeholder="Is dialogue"
                   options={[
                     { value: 'F', text: 'False' },
                     { value: 'T', text: 'True' }
