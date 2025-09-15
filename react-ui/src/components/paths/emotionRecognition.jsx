@@ -40,7 +40,7 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
 
     try {
       const transcription = audioFiles[selectedAudio].transcription;
-      const dialogue = audioFiles[selectedAudio].dialogue || false; // default to false
+      const dialogue = audioFiles[selectedAudio].dialogue === "T";
 
       // Send transcription & dialogue flag to server
       const response = await fetch("http://127.0.0.1:5000/asr/folltl", {
@@ -50,9 +50,9 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
       });
 
       const data = await response.json();
-      const output = data.result || data.error || "No result received";
+      const output = data.generated_text || data.error || "No result received";
 
-      setResult({ transcription, dialogue, output });
+      setResult({ transcription, dialogue: dialogue ? "T" : "F", output });
       setStatus(response.status);
     } catch (error) {
       setResult({

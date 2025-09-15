@@ -22,24 +22,15 @@ services:
       dockerfile: Dockerfile 
       args:
         USE_CUDA: "false"
-        HF_TOKEN: ${HF_TOKEN} 
     container_name: app
     ports:
       - "5000:5000"
-    depends_on:
-      - ollama
-
-  ollama:
-    build:
-      context: ./ollama
-      dockerfile: Dockerfile
-    container_name: ollama
+    env_file:
+      - ./.env
     volumes:
-      - ollama-data:/app/data 
-    environment:
-      - ENV=production
-    ports:
-      - "11434:11434"
-
-volumes:
-  ollama-data:
+      - ./models:/models
+      - ./llamipa_adapter:/outputs/llamipa_adapter
+    deploy:
+      resources:
+        limits:
+          memory: 40g

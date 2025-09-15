@@ -19,7 +19,6 @@ snapshot_download(
     repo_id="$MODEL_ID",
     token="$HF_TOKEN",
     local_dir="$MODEL_DIR",
-    progress=True
 )
 PYTHON
 else

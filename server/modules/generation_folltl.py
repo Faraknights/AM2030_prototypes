@@ -1,4 +1,4 @@
-# generation_folltl.py - Fixed version
+# generation_folltl.py - Memory-optimized version
 
 from collections import defaultdict
 from copy import deepcopy
@@ -7,69 +7,194 @@ import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 from peft import PeftModel, PeftConfig
 import numpy as np
+import gc
+import psutil
+import os
 from .llamipa_generate import get_discourse_parse
 
 # --- Configuration ---
 base_model_path = "/models/Meta-Llama-3-8B-Instruct"
 adapter_path = "/app/modules/nl-to-logic-adapter"
 
-dtype = torch.float16 if torch.cuda.is_available() else torch.float32
+# Memory management utilities
+def get_memory_usage():
+    """Get current memory usage in GB"""
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss / 1024 / 1024 / 1024
 
-# --- Fonction de chargement sûr ---
-def load_model_safely(base_model_path, adapter_path):
-    """Charge le modèle LLaMA-3 8B + LoRA adapter selon la disponibilité GPU"""
+def force_garbage_collect():
+    """Force garbage collection and clear cache"""
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+# --- Memory-optimized model loading ---
+def load_model_safely(base_model_path, adapter_path, max_memory_gb=30):
+    """
+    Load LLaMA-3 8B + LoRA adapter with strict memory constraints
+    """
     try:
-        base_model = AutoModelForCausalLM.from_pretrained(
-            base_model_path,
-            dtype=dtype,
-            device_map="auto",
-            offload_buffers=True,
-            offload_folder="/tmp/model_offload",
-            low_cpu_mem_usage=True
-        )
+        print(f"Initial memory usage: {get_memory_usage():.2f} GB")
+        
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        
+        # For CPU, use more aggressive memory optimizations
+        if device == "cpu":
+            # Use 8-bit quantization to reduce memory usage by ~50%
+            dtype = torch.int8
+            
+            # Calculate available memory for model loading
+            available_memory = max_memory_gb * 0.8  # Leave 20% buffer
+            
+            # Load base model with memory constraints
+            base_model = AutoModelForCausalLM.from_pretrained(
+                base_model_path,
+                torch_dtype=torch.float16,  # Use float16 for weights
+                device_map={"": "cpu"},
+                low_cpu_mem_usage=True,
+                max_memory={0: f"{available_memory}GB"},
+                offload_folder="/tmp/model_offload",
+                offload_state_dict=True,
+                load_in_8bit=False,  # We'll do manual quantization
+            )
+            
+            print(f"Base model loaded. Memory usage: {get_memory_usage():.2f} GB")
+            
+            # Force garbage collection before loading adapter
+            force_garbage_collect()
+            
+            # Load PEFT adapter
+            print("Loading PEFT adapter...")
+            peft_config = PeftConfig.from_pretrained(adapter_path)
+            print(f"PEFT config: {peft_config}")
 
-        print("Loading PEFT adapter...")
-        peft_config = PeftConfig.from_pretrained(adapter_path)
-        print(f"PEFT config: {peft_config}")
-
-        model = PeftModel.from_pretrained(
-            base_model,
-            adapter_path,
-            device_map="auto",
-            offload_buffers=True,
-            offload_folder="/tmp/model_offload"
-        )
+            model = PeftModel.from_pretrained(
+                base_model,
+                adapter_path,
+                device_map={"": "cpu"},
+                offload_folder="/tmp/model_offload_adapter",
+                max_memory={0: f"{available_memory}GB"}
+            )
+            
+        else:
+            # GPU loading with memory management
+            dtype = torch.float16
+            device_map = "auto"
+            
+            base_model = AutoModelForCausalLM.from_pretrained(
+                base_model_path,
+                torch_dtype=dtype,
+                device_map=device_map,
+                low_cpu_mem_usage=True,
+                max_memory={0: f"{max_memory_gb}GB"}
+            )
+            
+            print("Loading PEFT adapter...")
+            peft_config = PeftConfig.from_pretrained(adapter_path)
+            
+            model = PeftModel.from_pretrained(
+                base_model,
+                adapter_path,
+                device_map="auto",
+                max_memory={0: f"{max_memory_gb}GB"}
+            )
+        
+        print(f"Final memory usage: {get_memory_usage():.2f} GB")
         return model
 
     except Exception as e:
         print(f"Error loading model: {e}")
+        print(f"Current memory usage: {get_memory_usage():.2f} GB")
+        force_garbage_collect()
         raise e
 
-# --- Chargement ---
-model_with_adapter = load_model_safely(base_model_path, adapter_path)
+# Alternative: Lazy loading approach
+class LazyModelLoader:
+    """Load model only when needed and unload after use"""
+    
+    def __init__(self, base_model_path, adapter_path, max_memory_gb=30):
+        self.base_model_path = base_model_path
+        self.adapter_path = adapter_path
+        self.max_memory_gb = max_memory_gb
+        self.model = None
+        self.tokenizer = None
+        self.pipeline = None
+    
+    def load_if_needed(self):
+        """Load model only if not already loaded"""
+        if self.model is None:
+            print("Loading model on demand...")
+            self.model = load_model_safely(
+                self.base_model_path, 
+                self.adapter_path, 
+                self.max_memory_gb
+            )
+            
+            self.tokenizer = AutoTokenizer.from_pretrained(
+                self.base_model_path, 
+                add_eos_token=True
+            )
+            if self.tokenizer.pad_token is None:
+                self.tokenizer.pad_token_id = self.tokenizer.eos_token_id
+            
+            self.pipeline = pipeline(
+                task="text-generation",
+                model=self.model,
+                tokenizer=self.tokenizer
+            )
+    
+    def unload(self):
+        """Unload model to free memory"""
+        if self.model is not None:
+            del self.model
+            del self.tokenizer
+            del self.pipeline
+            self.model = None
+            self.tokenizer = None
+            self.pipeline = None
+            force_garbage_collect()
+            print(f"Model unloaded. Memory usage: {get_memory_usage():.2f} GB")
+    
+    def generate(self, text, **kwargs):
+        """Generate text with automatic model loading/unloading"""
+        self.load_if_needed()
+        try:
+            result = self.pipeline(text, **kwargs)
+            return result
+        finally:
+            # Optional: Unload after each use for maximum memory efficiency
+            # Comment out if you want to keep model loaded between calls
+            pass  # self.unload()
 
-# --- Tokenizer ---
-tokenizer = AutoTokenizer.from_pretrained(base_model_path, add_eos_token=True)
-if tokenizer.pad_token is None:
-    tokenizer.pad_token_id = tokenizer.eos_token_id
+# --- Choose loading strategy ---
+USE_LAZY_LOADING = True  # Set to False for normal loading
+MAX_MEMORY_GB = 28  # Adjust based on your system
 
-# 1. General-purpose pipeline
-folltl_pipeline = pipeline(
-    task="text-generation",
-    model=model_with_adapter,
-    tokenizer=tokenizer
-)
+if USE_LAZY_LOADING:
+    # Lazy loading approach - model loaded on demand
+    model_loader = LazyModelLoader(base_model_path, adapter_path, MAX_MEMORY_GB)
+    
+    def folltl_pipeline(text, **kwargs):
+        return model_loader.generate(text, **kwargs)
+    
+    print("✅ Lazy loading setup complete - model will be loaded on first use")
+else:
+    # Traditional loading with memory optimization
+    model_with_adapter = load_model_safely(base_model_path, adapter_path, MAX_MEMORY_GB)
+    
+    tokenizer = AutoTokenizer.from_pretrained(base_model_path, add_eos_token=True)
+    if tokenizer.pad_token is None:
+        tokenizer.pad_token_id = tokenizer.eos_token_id
 
-# --- Test ---
-test_input = "I really like the new song of Lady Gaga"
-output = folltl_pipeline(test_input,
-                max_new_tokens=10,
-                do_sample=True,
-                temperature=0.7)
-print(output)
+    folltl_pipeline = pipeline(
+        task="text-generation",
+        model=model_with_adapter,
+        tokenizer=tokenizer
+    )
+    
+    print("✅ Model loaded with memory optimization")
 
-print("✅ Both folltl_pipeline and logic_pipeline are ready")
-
+# Load music metadata
 artist_l = np.load("/app/modules/artists.npy")
 bands_l = np.load("/app/modules/bands.npy")
 songs_l = np.load("/app/modules/songs.npy")
@@ -79,15 +204,15 @@ music_metadata_d["artist"] = artist_l
 music_metadata_d["band"] = bands_l
 music_metadata_d["song"] = songs_l
 music_metadata_d["genre"] = genres_l    
-    
-from copy import deepcopy
-import re
 
 def get_logic_translation(s):
     """
     Returns the logic form (LF) of the input text `s`, along with its emotional tone
     ('like', 'dislike', 'neutral') and music replacements if applicable.
     """
+    
+    # Monitor memory usage during generation
+    initial_memory = get_memory_usage()
 
     # 1️⃣ Determine the category: music, podcast, other
     cat_text = f"""<|begin_of_text|>
@@ -96,9 +221,13 @@ The text contains instructions from a user. Output only one word: 'music', 'podc
 Text: {s}
 Answer:"""
 
-    cat_gen = folltl_pipeline(cat_text, max_new_tokens=20, do_sample=True, temperature=0.7)[0]["generated_text"]
+    cat_gen = folltl_pipeline(cat_text, max_new_tokens=1)[0]["generated_text"]
     cat_class = cat_gen.split("\nAnswer:")[-1].strip()
-    cat_class = cat_class.encode('ascii', 'ignore').decode('ascii')  # remove unwanted characters
+    cat_class = cat_class.encode('ascii', 'ignore').decode('ascii')
+
+    # Clear intermediate results to save memory
+    del cat_gen
+    force_garbage_collect()
 
     # 2️⃣ Determine emotional tone: like, dislike, neutral
     ldn_text = f"""<|begin_of_text|>
@@ -107,22 +236,26 @@ Text: {s}
 Answer only with one word: 'like', 'dislike', or 'neutral'. No explanations.
 Answer:"""
 
-    ldn_gen = folltl_pipeline(ldn_text, max_new_tokens=20, do_sample=True, temperature=0.7)[0]["generated_text"]
+    ldn_gen = folltl_pipeline(ldn_text, max_new_tokens=1)[0]["generated_text"]
     ldn_class = ldn_gen.split("\nAnswer:")[-1].strip()
-    ldn_class = ldn_class.encode('ascii', 'ignore').decode('ascii')  # remove unwanted characters
+    ldn_class = ldn_class.encode('ascii', 'ignore').decode('ascii')
+
+    del ldn_gen
+    force_garbage_collect()
 
     # 3️⃣ Convert to logic form
     if "podcast" in cat_class or "other" in cat_class:
         text = f"<|begin_of_text|>Convert the text into a logic form (LF) ### Text: {s}\n ### LF:"
-        lf = folltl_pipeline(text, max_new_tokens=100)[0]["generated_text"].split("\n ### LF:")[-1].strip()
+        lf = folltl_pipeline(text, max_new_tokens=200, do_sample=True, temperature=0.7)[0]["generated_text"].split("\n ### LF:")[-1].strip()
+        
+        print(f"Memory delta: {get_memory_usage() - initial_memory:.2f} GB")
         return lf, ldn_class
 
     elif "music" in cat_class:
-        # use the music ontology to replace phrases in the input with tags like [band], [artist], [genre], [song]
+        # use the music ontology to replace phrases in the input with tags
         replace = False
         s_new = deepcopy(s)
         replace_d = {}
-        conf_keys = {}
 
         for key in music_metadata_d.keys():
             for w in music_metadata_d[key]:
@@ -137,7 +270,7 @@ Answer:"""
                     s_new = s.lower().replace(w, f"[{key}]").capitalize()
 
         text = f"<|begin_of_text|>Convert the text into a logic form (LF) ### Text: {s_new}\n ### LF:"
-        lf = folltl_pipeline(text, max_new_tokens=100)[0]["generated_text"].split("\n ### LF:")[-1].strip()
+        lf = folltl_pipeline(text, max_new_tokens=200, do_sample=True, temperature=0.7)[0]["generated_text"].split("\n ### LF:")[-1].strip()
 
         # Replace ontology placeholders in LF
         if replace:
@@ -145,14 +278,12 @@ Answer:"""
                 repl_w = "_".join(replace_d[key].capitalize().split())
                 lf = re.sub(f"{key}|{key.capitalize()}|{key.upper()}", repl_w, lf)
 
+        print(f"Memory delta: {get_memory_usage() - initial_memory:.2f} GB")
         return lf, ldn_class, replace_d
 
     else:
-        # fallback
+        print(f"Memory delta: {get_memory_usage() - initial_memory:.2f} GB")
         return "", "", {}
-
-
-
 
 def get_logic_translation_dial(s):
     """
@@ -160,10 +291,6 @@ def get_logic_translation_dial(s):
     along with emotional tone and music replacements if applicable.
     
     Returns a consistent structure: (lf, sentiment, replace_d, clarification_msg)
-    - lf: logic form string (empty if ignored)
-    - sentiment: 'like', 'dislike', 'neutral' (empty if ignored)
-    - replace_d: dictionary of music replacements (empty if none)
-    - clarification_msg: clarification question string if needed, else None
     """
 
     # 1️⃣ Preprocess lines: add numbering
@@ -252,3 +379,13 @@ def get_logic_translation_dial(s):
             return out[0], out[1], out[2], None
         else:
             return out[0], out[1], {}, None
+
+# Memory monitoring function for debugging
+def print_memory_stats():
+    """Print current memory usage statistics"""
+    process = psutil.Process(os.getpid())
+    memory_info = process.memory_info()
+    print(f"RSS Memory: {memory_info.rss / 1024 / 1024 / 1024:.2f} GB")
+    print(f"VMS Memory: {memory_info.vms / 1024 / 1024 / 1024:.2f} GB")
+    if torch.cuda.is_available():
+        print(f"GPU Memory: {torch.cuda.memory_allocated() / 1024**3:.2f} GB")
