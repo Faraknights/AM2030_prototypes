@@ -162,13 +162,10 @@ class LazyModelLoader:
             result = self.pipeline(text, **kwargs)
             return result
         finally:
-            # Optional: Unload after each use for maximum memory efficiency
-            # Comment out if you want to keep model loaded between calls
-            pass  # self.unload()
+            pass 
 
-# --- Choose loading strategy ---
-USE_LAZY_LOADING = True  # Set to False for normal loading
-MAX_MEMORY_GB = 28  # Adjust based on your system
+USE_LAZY_LOADING = True 
+MAX_MEMORY_GB = 7  
 
 if USE_LAZY_LOADING:
     # Lazy loading approach - model loaded on demand
