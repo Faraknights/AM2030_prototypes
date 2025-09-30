@@ -7,7 +7,7 @@ import tempfile
 import torch
 
 
-from modules.generation_folltl import get_logic_translation, get_logic_translation_dial
+from modules.generation_folltl import get_logic_translation
 
 folltl_generation_bp = Blueprint('emotion', __name__)
 transcribe_bp = Blueprint('transcribe', __name__)
@@ -24,11 +24,7 @@ def folltl_generation():
 
         user_text = data["text"]
 
-        # Example: if dialogue flag is passed
-        if data.get("is_dialogue", False):
-            result = get_logic_translation_dial(user_text)
-        else:
-            result = get_logic_translation(user_text)
+        result = get_logic_translation(user_text)
 
         # Ensure we return a string, not a list/dict from the pipeline
         if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:

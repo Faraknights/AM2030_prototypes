@@ -1,42 +1,23 @@
 services:
-#  react-ui:
-#    build:
-#      context: .
-#      dockerfile: ./react-ui/Dockerfile
-#    container_name: react-ui
-#    ports:
-#      - "3000:3000"
-#    volumes:
-#      - ./react-ui:/app
-#      - /app/node_modules
-#    environment:
-#      - NODE_ENV=development
-#    stdin_open: true
-#    tty: true
-#    depends_on:
-#      - app
+  nl-to-logic-ui:
+    image: bastiennavarri/nltologic-ui:latest
+    container_name: react-ui
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./react-ui:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+    stdin_open: true
+    tty: true
+    depends_on:
+      - nl-to-logic-app
 
-  app:
-    build:
-      context: ./server
-      dockerfile: Dockerfile 
-      args:
-        USE_CUDA: "true"
+  nl-to-logic-app:
+    image: bastiennavarri/nltologic-app-gpu:latest
     container_name: app
     ports:
       - "5000:5000"
-    env_file:
-      - ./.env
     volumes:
       - ./models:/models
-      - ./llamipa_adapter:/outputs/llamipa_adapter
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
-
-volumes:
-  ollama-data:

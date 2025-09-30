@@ -1,8 +1,6 @@
 services:
-  react-ui:
-    build:
-      context: .
-      dockerfile: ./react-ui/Dockerfile
+  nl-to-logic-ui:
+    image: bastiennavarri/nltologic-ui:latest
     container_name: react-ui
     ports:
       - "3000:3000"
@@ -14,23 +12,12 @@ services:
     stdin_open: true
     tty: true
     depends_on:
-      - app
+      - nl-to-logic-app
 
-  app:
-    build:
-      context: ./server
-      dockerfile: Dockerfile 
-      args:
-        USE_CUDA: "false"
+  nl-to-logic-app:
+    image: bastiennavarri/nltologic-app-cpu:latest
     container_name: app
     ports:
       - "5000:5000"
-    env_file:
-      - ./.env
     volumes:
       - ./models:/models
-      - ./llamipa_adapter:/outputs/llamipa_adapter
-    deploy:
-      resources:
-        limits:
-          memory: 40g

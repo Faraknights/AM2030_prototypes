@@ -9,14 +9,14 @@ venv/
 *.log
 
 # Ignorer les fichiers React dans react-ui
-react-ui/**/node_modules
-react-ui/**/build
-react-ui/**/.cache
-react-ui/**/.git
-react-ui/**/.gitignore
-react-ui/**/.env
-react-ui/**/.vscode
-react-ui/**/.DS_Store
+react-ui/node_modules
+react-ui/build
+react-ui/.cache
+react-ui/.git
+react-ui/.gitignore
+react-ui/.env
+react-ui/.vscode
+react-ui/.DS_Store
 
 # Ignorer les fichiers système
 .DS_Store

@@ -1,0 +1,56 @@
+swagger: "2.0"
+info:
+  title: ASR API
+  version: "1.0.0"
+  description: |
+    This API provides Automatic Speech Recognition (ASR) services, including GPU status checks and generation of FOL/TTL text from audio transcriptions.
+
+paths:
+  /gpu:
+    get:
+      summary: Check GPU availability
+      description: |
+        Returns whether a GPU is available on the server for processing. Useful for clients to know if GPU-accelerated operations can be used.
+      responses:
+        200:
+          description: GPU availability status
+          schema:
+            type: object
+            properties:
+              gpu_available:
+                type: boolean
+                description: True if a GPU is available, false otherwise.
+
+  /asr/folltl:
+    post:
+      summary: Generate FOL/TTL text from transcription
+      description: |
+        Accepts a transcription text and generates corresponding FOL/TTL text. Returns either the generated text or an error message if generation fails.
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          required: true
+          description: JSON object containing the transcription text to process.
+          schema:
+            type: object
+            properties:
+              text:
+                type: string
+                description: The transcription text obtained from an audio file.
+                example: I like the song Dumb from Nirvana.
+      responses:
+        200:
+          description: Result of FOL/TTL generation
+          schema:
+            type: object
+            properties:
+              generated_text:
+                type: string
+                description: The text generated from the transcription. Present only if generation succeeds.
+              error:
+                type: string
+                description: Error message describing why generation failed. Present only if an error occurs.

@@ -11,10 +11,9 @@ function App() {
     const fetchAudioFiles = async () => {
       try {
         const fileList = [
-          "Test_IDoNotBelieveYou.json",
-          "Test_What.json",
-          "Conversation.json",
-          "open_window.json",
+          "Beatles.json",
+          "Dumb.json",
+          "Rock.json"
         ];
 
         const fileDataPromises = fileList.map(async (fileName) => {

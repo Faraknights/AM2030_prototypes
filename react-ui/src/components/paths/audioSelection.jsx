@@ -1,7 +1,6 @@
   import React, { useState, useEffect, useRef } from "react";
   import Accordion from "../accordion";
   import TextInput from "../textInput";
-  import SelectInput from "../selectInput";
 
   const AudioSelection = ({ audioFiles, setAudioFiles, selectedAudio, setSelectedAudio }) => {
     const [isRecording, setIsRecording] = useState(false);
@@ -59,7 +58,6 @@
                   ID: `audioFile_${Date.now()}`,
                   encoded_audio: base64,
                   audioUrl,
-                  dialogue: "F",
                   transcription,
                 },
               ]);
@@ -104,14 +102,6 @@
       });
     };
 
-    const updateAudioFileDialogue = (index, newDialogue) => {
-      setAudioFiles((prevFiles) => {
-        const updatedFiles = [...prevFiles];
-        updatedFiles[index] = { ...updatedFiles[index], dialogue: newDialogue };
-        return updatedFiles;
-      });
-    };
-
     const updateAudioFileTranscription = (index, newTranscription) => {
       setAudioFiles((prevFiles) => {
         const updatedFiles = [...prevFiles];
@@ -148,7 +138,6 @@
                   ID: jsonData.ID,
                   encoded_audio: jsonData.encoded_audio,
                   audioUrl: `data:audio/wav;base64,${jsonData.encoded_audio}`,
-                  dialogue: jsonData.dialogue || "F",
                   transcription: jsonData.transcription || "", 
                 },
               ]);
@@ -186,7 +175,6 @@
                   ID: fileNameWithoutExtension,
                   encoded_audio: base64,
                   audioUrl: audioUrl,
-                  dialogue: "F",
                   transcription,
                 },
               ]);
@@ -239,15 +227,6 @@
                   setValue={(newID) => updateAudioFileID(index, newID)}
                   placeholder="Audio ID"
                   hasError={file.ID === ""}
-                />
-                <SelectInput
-                  value={file.dialogue}
-                  setValue={(newDialogue) => updateAudioFileDialogue(index, newDialogue)}
-                  placeholder="Is dialogue"
-                  options={[
-                    { value: 'F', text: 'False' },
-                    { value: 'T', text: 'True' }
-                  ]}
                 />
                 <audio controls src={file.audioUrl}></audio>
                 <button

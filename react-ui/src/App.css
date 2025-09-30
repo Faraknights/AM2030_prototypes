@@ -412,12 +412,17 @@ span.warning{
 .audio-row{
   display: grid;
   gap: 10px;
-  grid-template-columns: 40px 20% min-content auto min-content min-content min-content min-content min-content;
+  grid-template-columns: 40px 20% auto min-content min-content min-content min-content min-content;
   grid-template-rows: auto auto;
   padding: 15px 10px;
   border-radius: 10px;
   box-shadow: 3px 3px 14px rgba(0, 0, 0, 0.25);
   margin: 15px 0;
+}
+
+.audio-row > audio{
+  border-radius: 6px;
+  width: 100%;
 }
 
 .audio-row .vertical {
@@ -428,14 +433,14 @@ span.warning{
 }
 
 .audio-row .vertical.one {
-  grid-column: 5;
+  grid-column: 4;
 }
 .audio-row .vertical.one {
-  grid-column: 8;
+  grid-column: 7;
 }
 
 .audio-row > .transcript {
-  grid-column: 2 / 5;
+  grid-column: 2 / 4;
   grid-row: 2;
 }
 
@@ -481,17 +486,13 @@ span.warning{
   justify-content: center;
 }
 
-.audio-row > audio{
-  border-radius: 6px;
-}
-
 .sendAudioButton{
   grid-row: 1;
-  grid-column: 6 / 8;
+  grid-column: 5 / 7;
 }
 
 .audio-row .download[title="Download JSON file"]{
-  grid-column: 6;
+  grid-column: 5;
 }
 
 .sendAudioButton, .recordingButton {
