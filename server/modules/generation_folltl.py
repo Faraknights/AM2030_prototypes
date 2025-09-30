@@ -120,7 +120,12 @@ class LazyModelLoader:
             pass 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 USE_LAZY_LOADING = True
+=======
+USE_LAZY_LOADING = True 
+MAX_MEMORY_GB = 7  
+>>>>>>> f4b0ca3d40d36798d11704c18a043f74709cd32c
 =======
 USE_LAZY_LOADING = True 
 MAX_MEMORY_GB = 7  
