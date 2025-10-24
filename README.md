@@ -1,41 +1,66 @@
-# AM2030 Prototype Setup
+This repository implements the QLoRA adapter of **Llama-3-8B-Instruct**, fine-tuned to translate natural language into **First-Order Logic (FOL)** and **Linear Temporal Logic (LTL)**.  
+It is specifically adapted to capture **user preferences and likes** expressed in natural language utterances.
 
-## 1. **Build the Docker Image**
+# Installation with Docker
 
-To build the Docker image from the `Dockerfile` in the current directory, run:
+You can deploy the project using either CPU or GPU, depending on your system.
 
-``docker build -t prototype_am2030_gpu .``
+### CPU Deployment
 
-This command will create the image `prototype_am2030_gpu`.
-
-## 2. **Run the Docker Container on GPU**
-
-Once the image is built, run the container with GPU support and map port 5000 from the container to the host:
-
-``docker run --gpus all -d -p 5000:5000 --name am2030_prototype prototype_am2030_gpu``
-
-This will:
-
-- Start the container in detached mode (`-d`).
-- Give the container access to all GPUs (`--gpus all`).
-- Expose port 5000 to the host, making the Flask app accessible.
-
-## 3. **Access the prototype UI**
-
-Once the container is running, you can access the Flask app UI in your browser at:
+Run the following command:
 
 ```
-http://localhost:5000
+docker-compose -f docker-compose_cpu.yml up --build
 ```
 
-You can also use `curl` to interact with the application via its endpoints.
+### GPU Deployment
 
-## 4. **Stopping the Container**
+If you have an NVIDIA GPU and CUDA installed:
 
-To stop the container, use the following command:
+```
+docker-compose -f docker-compose_gpu.yml up --build
+```
 
-``docker stop am2030_prototype``
+# Interfaces
 
-To remove the container:
+- Backend Swagger API: http://localhost:5000/apidocs  
+- React frontend UI: http://localhost:3000
 
-``docker rm am2030_prototype``
+# API Endpoints
+
+1. **Check GPU availability**
+
+   GET /gpu  
+   Returns JSON indicating whether a GPU is available for processing.
+
+   Example response:
+   ```
+   {
+     "gpu_available": true
+   }
+   ```
+
+2. **Generate FOL/TTL from transcription**
+
+   POST /asr/folltl  
+   Accepts a JSON body with a transcription and returns the generated FOL/TTL text or an error.
+
+   Example request:
+   ```
+   {
+     "text": "I like the song Dumb from Nirvana."
+   }
+   ```
+
+   Example response:
+   ```
+   {
+     "generated_text": "(likes I (song Dumb Nirvana))"
+   }
+   ```
+
+# Notes
+
+- Use the CPU or GPU Docker Compose command depending on your environment.  
+- Both Swagger and the React UI are accessible simultaneously; the React UI provides a more user-friendly interface for testing.  
+- The backend API can be accessed directly for integration or scripting purposes.
