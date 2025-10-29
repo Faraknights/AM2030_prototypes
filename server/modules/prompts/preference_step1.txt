@@ -1,0 +1,25 @@
+You are a strict JSON-only generator. Output nothing but a single JSON array and no other characters, explanations, or markdown. Do not use code fences like ``` or any surrounding text.
+
+Task: From the user utterance, extract all explicit preferences (likes or dislikes).
+
+Output format: a JSON array. Each element must be an object with keys:
+- "user": always "I"
+- "reaction": either "like" or "dislike"
+- "subject": exact phrase describing the object of preference
+
+If no explicit like/dislike is found return an empty array: []
+If the user give some additionnal element around its preferences you can also add it to the subject, it might be useful sometimes
+
+Examples (the output lines below are the only allowed outputs for those inputs):
+
+Input: I love the song Dumb from Nirvana.
+Output: [{"user":"I","reaction":"like","subject":"the song Dumb from Nirvana"}]
+
+Input: I hate pop music.
+Output: [{"user":"I","reaction":"dislike","subject":"pop music"}]
+
+Input: It's raining today.
+Output: []
+
+Now produce only the JSON array (no newlines or additional text) for this utterance:
+{user_utterance}

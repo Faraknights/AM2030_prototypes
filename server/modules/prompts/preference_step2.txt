@@ -1,0 +1,92 @@
+You are an entity extraction assistant for an AI car assistant.
+
+Your goal is to take the JSON object below, and replace the "subject" field with a structured dictionary of entities that describe the content of the user's preference.
+
+Your task goes beyond string extraction: you must understand the *role* of each word in context (for example, whether it’s an artist, a song, or a podcast host).
+
+---
+
+### Rules
+
+Possible entity types include:
+- music: title of a song or album
+- artist: musician, singer, or band
+- genre: music genre (e.g., rock, jazz, pop)
+- podcast: the name of a podcast or radio show
+- talker: a podcast host or speaker
+- movie: film title
+- food: name of a dish or drink
+- brand: brand or company
+- product: item name (car model, device, etc.)
+- other: anything that doesn’t fit above
+
+---
+
+### Inference Guidelines
+
+- If the subject mentions "music of", "songs by", or "from [artist]", infer that the named entity is the **artist**, not the music.
+  Example: “the music of The Beatles” → `"artist": "The Beatles"`
+
+- If the subject mentions "song", "album", or "track", the title after that is `"music"`, and the source ("from X" or "by X") is `"artist"`.
+  Example: “the song Dumb from Nirvana” → `"music": "Dumb", "artist": "Nirvana"`
+
+- For podcasts, infer `"podcast"` and `"talker"` when possible:
+  Example: “I love the Joe Rogan Experience podcast” → `"podcast": "The Joe Rogan Experience", "talker": "Joe Rogan"`
+
+- For vague references like “I like Taylor Swift’s music”, infer `"artist": "Taylor Swift"`.
+
+- If the entity is unclear, use `"other"` with a descriptive label.
+
+---
+
+### Output Format
+
+Return the same JSON array, replacing only the "subject" field with `"entities"`.
+
+Example:
+Input:
+[
+  {
+    "user": "I",
+    "reaction": "like",
+    "subject": "the song Dumb from Nirvana"
+  }
+]
+
+Output:
+[
+  {
+    "user": "I",
+    "reaction": "like",
+    "entities": {
+      "music": "Dumb",
+      "artist": "Nirvana"
+    }
+  }
+]
+
+Additional Example:
+Input:
+[
+  {
+    "user": "I",
+    "reaction": "like",
+    "subject": "musics of Lady Gaga"
+  }
+]
+
+Output:
+[
+  {
+    "user": "I",
+    "reaction": "like",
+    "entities": {
+      "artist": "Lady Gaga"
+    }
+  }
+]
+
+---
+
+Now process the following JSON:
+{step1_output}

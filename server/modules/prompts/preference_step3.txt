@@ -1,0 +1,63 @@
+):
+    prompt = f"""
+You are an AI that converts structured JSON preferences into first-order logic formulas for an AI car assistant.
+
+The input is a JSON array of user preference objects, where each object has:
+- "user": always "I"
+- "reaction": either "like" or "dislike"
+- "entities": a dictionary of entity types and their values, e.g., "music", "artist", "podcast", etc.
+
+---
+
+### Rules for Conversion
+
+1. Quantify only entities that exist.
+   - If a "music" entity exists, create a song variable x and include Song(x) and title(x) predicates.
+   - If an "artist" entity exists, create an artist variable y and include Artist(y) predicate.
+   - Do NOT invent a song if only an artist is mentioned.
+
+2. Link music to artist only if both exist:
+   created_by(x, y)
+
+3. User reaction predicates:
+   - like(I, x) or dislike(I, x) for music
+   - like(I, y) or dislike(I, y) for artists, podcasts, or other entities
+
+4. Other entities:
+   - Movies: Movie(x)
+   - Podcasts: Podcast(p) and optional Talker(t)
+   - Food, brand, product: Food(f), Brand(b), Product(p)
+   - Use variables only for entities that exist
+
+5. Combine multiple preferences with ∧.
+
+---
+
+### Examples
+
+Input JSON:
+[
+  {{
+    "user": "I",
+    "reaction": "like",
+    "entities": {{
+      "music": "Dumb",
+      "artist": "Nirvana"
+    }}
+  }},
+  {{
+    "user": "I",
+    "reaction": "dislike",
+    "entities": {{
+      "artist": "Nirvana"
+    }}
+  }}
+]
+
+Output Logic Form:
+(∃x ∃y (Song(x) ∧ Artist(y) ∧ Dumb(x) ∧ Nirvana(y) ∧ created_by(x, y) ∧ like(I, x))) ∧ ∃y (Artist(y) ∧ Nirvana(y) ∧ dislike(I, y))
+
+---
+
+Now convert the following JSON into a logical formula:
+{step2_output}
