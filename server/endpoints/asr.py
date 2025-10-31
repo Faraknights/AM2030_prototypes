@@ -5,15 +5,42 @@ import os
 import whisper
 import tempfile
 import torch
+import requests
+import json
 
-
-from modules.generation_folltl import get_logic_translation
-
-folltl_generation_bp = Blueprint('emotion', __name__)
+folltl_generation_bp = Blueprint('folltl', __name__)
 transcribe_bp = Blueprint('transcribe', __name__)
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 whisp = whisper.load_model("turbo", device=device)
+
+OLLAMA_URL = "http://ollama:11434/api/generate"
+
+
+def query_ollama(model: str, text: str) -> str:
+    """Query a local Ollama model with raw text."""
+    payload = {
+        "model": model,
+        "prompt": text,
+        "stream": False
+    }
+    try:
+        response = requests.post(OLLAMA_URL, json=payload)
+        response.raise_for_status()
+        return response.json().get("response", "").strip()
+    except Exception as e:
+        print(f"⚠️ Error querying Ollama ({model}):", e)
+        return ""
+
+
+def safe_json_parse(text: str, fallback):
+    """Safely parse JSON output."""
+    try:
+        return json.loads(text.replace("json", "").replace("`", ""))
+    except json.JSONDecodeError:
+        print("⚠️ JSON parsing failed. Raw output:")
+        print(text)
+        return fallback
 
 @folltl_generation_bp.route('/folltl', methods=['POST'])
 def folltl_generation():
@@ -24,15 +51,33 @@ def folltl_generation():
 
         user_text = data["text"]
 
-        result = get_logic_translation(user_text)
+        """Run the full 3-step pipeline in sequence."""
+        print(f"\n🎯 User utterance: {user_text}\n")
 
-        # Ensure we return a string, not a list/dict from the pipeline
-        if isinstance(result, list) and len(result) > 0 and "generated_text" in result[0]:
-            generated_text = result[0]["generated_text"]
-        else:
-            generated_text = str(result)
+        # Step 1 — Detect preferences
+        print("🧩 Step 1 — Detecting preferences...")
+        step1_raw = query_ollama("preference_step1", user_text)
+        step1 = safe_json_parse(step1_raw, [])
+        print(json.dumps(step1, indent=2))
 
-        return jsonify({"generated_text": generated_text}), 200
+        if not step1:
+            print("\nNo preferences found, stopping pipeline.")
+            return
+
+        # Step 2 — Extract entities
+        print("\n🧩 Step 2 — Extracting entities...")
+        step2_input = json.dumps(step1, indent=2)
+        step2_raw = query_ollama("preference_step2", step2_input)
+        step2 = safe_json_parse(step2_raw, step1)
+        print(json.dumps(step2, indent=2))
+
+        # Step 3 — Convert to logic representation
+        print("\n🧠 Step 3 — Converting to logic form...")
+        step3_input = json.dumps(step2, indent=2)
+        logic = query_ollama("preference_step3", step3_input)
+        print(logic.replace("json", "").replace("`", ""))
+
+        return jsonify({"generated_text": logic}), 200
 
     except Exception as e:
         return jsonify({"error": "Folltl generation failed", "message": str(e)}), 500

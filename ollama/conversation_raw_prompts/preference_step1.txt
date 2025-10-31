@@ -21,5 +21,6 @@ Output: [{"user":"I","reaction":"dislike","subject":"pop music"}]
 Input: It's raining today.
 Output: []
 
-Now produce only the JSON array (no newlines or additional text) for this utterance:
-{user_utterance}
+Now produce only the JSON array (no newlines or additional text):
+
+Tell me "ready" when you are

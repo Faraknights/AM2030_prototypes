@@ -60,4 +60,5 @@ Output Logic Form:
 ---
 
 Now convert the following JSON into a logical formula:
-{step2_output}
+
+Tell me "ready" when you are
