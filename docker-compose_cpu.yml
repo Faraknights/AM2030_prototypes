@@ -1,7 +1,8 @@
 services:
-  nl-to-logic-ui:
-    image: bastiennavarri/nltologic-ui:latest
-    container_name: react-ui
+  react-ui:
+    build:
+      context: ./react-ui
+      dockerfile: Dockerfile
     ports:
       - "3000:3000"
     volumes:
@@ -12,12 +13,30 @@ services:
     stdin_open: true
     tty: true
     depends_on:
-      - nl-to-logic-app
+      - app
 
-  nl-to-logic-app:
-    image: bastiennavarri/nltologic-app-cpu:latest
+  app:
+    build:
+      context: ./server
+      dockerfile: Dockerfile 
     container_name: app
     ports:
       - "5000:5000"
+    depends_on:
+      - ollama
+
+
+  ollama:
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    container_name: ollama
     volumes:
-      - ./models:/models
+      - ollama-data:/app/data 
+    environment:
+      - ENV=production
+    ports:
+      - "11434:11434"
+
+volumes:
+  ollama-data:

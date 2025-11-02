@@ -51,36 +51,15 @@ def folltl_generation():
 
         user_text = data["text"]
 
-        """Run the full 3-step pipeline in sequence."""
-        print(f"\n🎯 User utterance: {user_text}\n")
-
-        # Step 1 — Detect preferences
-        print("🧩 Step 1 — Detecting preferences...")
         step1_raw = query_ollama("preference_step1", user_text)
-        step1 = safe_json_parse(step1_raw, [])
-        print(json.dumps(step1, indent=2))
-
-        if not step1:
-            print("\nNo preferences found, stopping pipeline.")
-            return
-
-        # Step 2 — Extract entities
-        print("\n🧩 Step 2 — Extracting entities...")
-        step2_input = json.dumps(step1, indent=2)
-        step2_raw = query_ollama("preference_step2", step2_input)
-        step2 = safe_json_parse(step2_raw, step1)
-        print(json.dumps(step2, indent=2))
-
-        # Step 3 — Convert to logic representation
-        print("\n🧠 Step 3 — Converting to logic form...")
-        step3_input = json.dumps(step2, indent=2)
-        logic = query_ollama("preference_step3", step3_input)
-        print(logic.replace("json", "").replace("`", ""))
+        step2_raw = query_ollama("preference_step2", step1_raw)
+        logic = query_ollama("preference_step3", step2_raw)
 
         return jsonify({"generated_text": logic}), 200
 
     except Exception as e:
         return jsonify({"error": "Folltl generation failed", "message": str(e)}), 500
+
 
 
 @transcribe_bp.route('/transcribe', methods=['POST'])
