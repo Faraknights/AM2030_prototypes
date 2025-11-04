@@ -19,7 +19,9 @@ services:
     build:
       context: ./server
       dockerfile: Dockerfile 
-    container_name: app
+      args:
+        USE_CUDA: "false"   
+    container_name: app_fol
     ports:
       - "5000:5000"
     depends_on:
@@ -30,7 +32,7 @@ services:
     build:
       context: ./ollama
       dockerfile: Dockerfile
-    container_name: ollama
+    container_name: ollama_fol
     volumes:
       - ollama-data:/app/data 
     environment:

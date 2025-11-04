@@ -8,7 +8,7 @@ RUN apt-get update && \
 
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-RUN pip install --break-system-packages pexpect
+RUN PIP_BREAK_SYSTEM_PACKAGES=1 pip install --no-cache-dir pexpect
 
 # Create app directory and copy files
 WORKDIR /app
