@@ -1,5 +1,3 @@
-):
-    prompt = f"""
 You are an AI that converts structured JSON preferences into first-order logic formulas for an AI car assistant.
 
 The input is a JSON array of user preference objects, where each object has:
@@ -12,24 +10,23 @@ The input is a JSON array of user preference objects, where each object has:
 ### Rules for Conversion
 
 1. Quantify only entities that exist.
-   - If a "music" entity exists, create a song variable x and include Song(x) and title(x) predicates.
+   - If a "music" entity exists, create a music variable x and include Music(x) predicate.
    - If an "artist" entity exists, create an artist variable y and include Artist(y) predicate.
    - Do NOT invent a song if only an artist is mentioned.
-
 2. Link music to artist only if both exist:
    created_by(x, y)
-
 3. User reaction predicates:
-   - like(I, x) or dislike(I, x) for music
-   - like(I, y) or dislike(I, y) for artists, podcasts, or other entities
-
-4. Other entities:
-   - Movies: Movie(x)
-   - Podcasts: Podcast(p) and optional Talker(t)
-   - Food, brand, product: Food(f), Brand(b), Product(p)
-   - Use variables only for entities that exist
-
-5. Combine multiple preferences with ∧.
+   - use the user's reaction as a predicate:
+     like(I, v) or dislike(I, v), where v is the variable representing the entity
+4. Combine multiple preferences with ∧.
+5. Use parentheses to clearly define the scope of all existential quantifiers.
+   - Example: ∃x (Song(x) ∧ Dumb(x) ∧ like(I, x))
+   - Never write ∃x Song(x) ∧ Dumb(x) ∧ like(I, x)
+6. For each entity, use its name as a predicate applied to the variable.
+   - Example: If music = "Happy", create a variable x, then include Music(x) ∧ Happy(x)
+   - If artist = "Nirvana", create y and include Artist(y) ∧ Nirvana(y)
+   - Multi-word entities should replace spaces with underscores for predicates
+     e.g., "Burger King" → Burger_King(b)
 
 ---
 
@@ -37,28 +34,29 @@ The input is a JSON array of user preference objects, where each object has:
 
 Input JSON:
 [
-  {{
+  {
     "user": "I",
     "reaction": "like",
-    "entities": {{
+    "entities": {
       "music": "Dumb",
       "artist": "Nirvana"
-    }}
-  }},
-  {{
+    }
+  },
+  {
     "user": "I",
     "reaction": "dislike",
-    "entities": {{
+    "entities": {
       "artist": "Nirvana"
-    }}
-  }}
+    }
+  }
 ]
 
 Output Logic Form:
 (∃x ∃y (Song(x) ∧ Artist(y) ∧ Dumb(x) ∧ Nirvana(y) ∧ created_by(x, y) ∧ like(I, x))) ∧ ∃y (Artist(y) ∧ Nirvana(y) ∧ dislike(I, y))
 
 ---
+Important: Each output formula should include only variables and predicates corresponding to entities present in the input. Do not copy entities from examples.
 
-Now convert the following JSON into a logical formula:
+Now convert the following JSON I will give you and nothing else into a logical formula:
 
 Tell me "ready" when you are
