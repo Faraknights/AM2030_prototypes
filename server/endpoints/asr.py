@@ -52,15 +52,22 @@ def folltl_generation():
         user_text = data["text"]
 
         step1_raw = query_ollama("preference_step1", user_text)
-        step2_raw = query_ollama("preference_step2", step1_raw)
-        logic = query_ollama("preference_step3", step2_raw)
+        step1 = safe_json_parse(step1_raw, [])
+
+        if not step1:
+            return jsonify({"generated_text": "No preferences detected."}), 200
+
+        step2_input = json.dumps(step1, indent=2)
+        step2_raw = query_ollama("preference_step2", step2_input)
+        step2 = safe_json_parse(step2_raw, step1)
+
+        step3_input = json.dumps(step2, indent=2)
+        logic = query_ollama("preference_step3", step3_input)
 
         return jsonify({"generated_text": logic}), 200
 
     except Exception as e:
         return jsonify({"error": "Folltl generation failed", "message": str(e)}), 500
-
-
 
 @transcribe_bp.route('/transcribe', methods=['POST'])
 def transcribe_audio():
