@@ -52,8 +52,9 @@ def folltl_generation():
         user_text = data["text"]
 
         step1_raw = query_ollama("preference_step1", user_text)
-        step1 = safe_json_parse(step1_raw, [])
 
+        step1 = safe_json_parse(step1_raw, [])
+        return jsonify({"generated_text": step1}), 200
         if not step1:
             return jsonify({"generated_text": "No preferences detected."}), 200
 

@@ -42,7 +42,7 @@ const EmotionRecognition = ({ audioFiles, selectedAudio }) => {
       const transcription = audioFiles[selectedAudio].transcription;
 
       // Send transcription
-      const response = await fetch("http://127.0.0.1:5000/asr/folltl", {
+      const response = await fetch("https://uncombustible-collinearly-corene.ngrok-free.dev/asr/folltl", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: transcription }),
