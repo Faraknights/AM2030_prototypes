@@ -1,41 +1,69 @@
-# AM2030 Prototype Setup
+# AM2030 Prototypes
 
-## 1. **Build the Docker Image**
+This repository contains prototypes developed within the **AM2030 project**, focusing on intelligent in-vehicle assistants designed to operate in **resource-constrained environments** such as embedded automotive systems.
 
-To build the Docker image from the `Dockerfile` in the current directory, run:
+## Overview
 
-``docker build -t prototype_am2030_gpu .``
+The goal of this project is to design a conversational interface capable of:
 
-This command will create the image `prototype_am2030_gpu`.
+- Understanding user intentions
+- Detecting emotional states
+- Extracting structured knowledge from natural language
 
-## 2. **Run the Docker Container on GPU**
+All components are built with **Small Language Models (SLMs)** to ensure compatibility with **limited computational environments** like cars.
 
-Once the image is built, run the container with GPU support and map port 5000 from the container to the host:
+---
 
-``docker run --gpus all -d -p 5000:5000 --name am2030_prototype prototype_am2030_gpu``
+## Key Features
 
-This will:
+### 1. Emotion Detection
 
-- Start the container in detached mode (`-d`).
-- Give the container access to all GPUs (`--gpus all`).
-- Expose port 5000 to the host, making the Flask app accessible.
+The system performs **sentiment analysis** based on the **Ekman model**, detecting 7 core emotions:
 
-## 3. **Access the prototype UI**
+- Joy  
+- Sadness  
+- Anger  
+- Fear  
+- Disgust  
+- Surprise  
+- Neutral  
 
-Once the container is running, you can access the Flask app UI in your browser at:
+This enables the assistant to adapt its responses according to the user’s emotional state.
 
-```
-http://localhost:5000
-```
+---
 
-You can also use `curl` to interact with the application via its endpoints.
+### 2. Intent Detection Pipeline
 
-## 4. **Stopping the Container**
+Intent recognition is handled using a **multi-step LLM-based pipeline**, designed for robustness and scalability:
 
-To stop the container, use the following command:
+#### Step 1: Category Classification
+- The user input is first classified into a **high-level category**.
 
-``docker stop am2030_prototype``
+#### Step 2: Intent Classification
+- Within the predicted category, a **specific intent** is selected.
+- The system supports over 100fine-grained intents.
 
-To remove the container:
+#### Step 3: Parameter Extraction
+- Relevant **entities and parameters** are extracted from the user query.
 
-``docker rm am2030_prototype``
+This decomposition approach improves accuracy and reduces ambiguity compared to single-step classification.
+
+---
+
+### 3. Preference Detection (Branch: `FOL_Bastien`)
+
+An extended module is available in the `FOL_Bastien` branch.
+
+#### Objective
+Detect and formalize **user preferences** expressed in natural language.
+
+The pipeline works such as follows:
+
+1. Identify preferences in the user sentence
+2. Decompose the sentence into relevant entities
+3. Translate the extracted information into **First-Order Logic (FOL)**
+
+#### example
+
+![Environment](/src/6e023ce6-37a4-4123-9b20-70bf17fb31fd.png)
+
